@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -23,7 +24,11 @@ public class MainActivity extends AppCompatActivity {
     // when a TextView is clicked, we know which cell it is
     private ArrayList<TextView> cell_tvs;
     boolean[][] bombGrid = new boolean[12][10]; // Initialize a 2D array to track bomb locations
+    boolean flagbtn = false;
+    boolean[][] flagGrid = new boolean[12][10]; // Initialize a 2D array to track bomb locations
 
+    int flagCount = 4;
+    ToggleButton toggleButton;
 
 
     private int dpToPixel(int dp) {
@@ -37,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         cell_tvs = new ArrayList<TextView>();
+        toggleButton = findViewById(R.id.toggleButton);
+
+        TextView flagCounterTextView = findViewById(R.id.flagCounterTextView);
+
+        // Update the flag count display
+        updateFlagCountDisplay(flagCounterTextView);
+
+
 
 //        // Method (1): add statically created cells
 //        TextView tv00 = (TextView) findViewById(R.id.textView00);
@@ -116,6 +129,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    private void updateFlagCountDisplay(TextView flagCounterTextView) {
+        // Update the flag count display
+        flagCounterTextView.setText("Flags: " + flagCount);
+    }
+
 
     private int findIndexOfCellTextView(TextView tv) {
         for (int n=0; n<cell_tvs.size(); n++) {
@@ -125,6 +143,19 @@ public class MainActivity extends AppCompatActivity {
         return -1;
     }
 
+    private boolean flagMode = false;
+
+    public void setFlagMode(boolean flagMode) {
+        this.flagMode = flagMode;
+        flagbtn = true;
+    }
+
+    // You can also add a getter method to check the current flag mode status.
+    public boolean isFlagMode() {
+        return flagMode;
+    }
+
+
     public void onClickTV(View view){
         TextView tv = (TextView) view;
         int n = findIndexOfCellTextView(tv);
@@ -132,7 +163,18 @@ public class MainActivity extends AppCompatActivity {
         int j = n%COLUMN_COUNT;
         tv.setText(String.valueOf(i) + String.valueOf(j));
 
-        if (bombGrid[i][j]) {
+        if (toggleButton.isChecked()) {
+            // Flag mode is enabled
+            toggleButton.setText(R.string.flag);
+            setFlagMode(false);
+        } else {
+            // Dig mode is enabled
+            toggleButton.setText(R.string.pick);
+            setFlagMode(true);
+        }
+
+
+        if (bombGrid[i][j] && !flagMode) {
             for (int row = 0; row < bombGrid.length; row++) {
                 for (int col = 0; col < bombGrid[0].length; col++) {
                     if (bombGrid[row][col]) {
@@ -144,21 +186,40 @@ public class MainActivity extends AppCompatActivity {
                         cell_tvs.get(row * COLUMN_COUNT + col).setBackgroundColor(Color.RED);
                     }
                 }
-
             }
         }
         else {
-            if (tv.getCurrentTextColor() == Color.GRAY) {
-                tv.setTextColor(Color.GREEN);
-                tv.setBackgroundColor(Color.parseColor("lime"));
-            } else {
-                tv.setTextColor(Color.GRAY);
-                tv.setBackgroundColor(Color.LTGRAY);
+            if (flagMode) {
+                if (flagGrid[i][j] == true) {
+                    remove_flag(i, j);
+                }
+                else {
+                    place_flag(i, j);
+                    tv.setBackgroundColor(Color.parseColor("lime"));
+                }
+            }
+            else {
+                if (tv.getCurrentTextColor() == Color.GRAY) {
+                    tv.setTextColor(Color.GREEN);
+                    tv.setBackgroundColor(Color.parseColor("lime"));
+                } else {
+                    tv.setTextColor(Color.GRAY);
+                    tv.setBackgroundColor(Color.LTGRAY);
+                }
+
             }
         }
 
     }
 
+    void place_flag(int row, int col) {
+        cell_tvs.get(row * COLUMN_COUNT + col).setText(getString(R.string.flag));
+        flagGrid[row][col] = true;
+    }
+    void remove_flag(int row, int col) {
+        cell_tvs.get(row * COLUMN_COUNT + col).setText("");
+        flagGrid[row][col] = false;
+    }
     void placeBombs(boolean[][] bombGrid) {
         Random rand = new Random();
         int bombsPlaced = 0;
