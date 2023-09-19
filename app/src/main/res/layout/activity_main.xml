@@ -11,7 +11,7 @@
         android:id="@+id/timeCounterLabel"
         android:layout_width="32dp"
         android:layout_height="25dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="192dp"
         android:text="@string/clock"
         app:layout_constraintBaseline_toBaselineOf="@+id/timeCounterTextView"
         app:layout_constraintStart_toStartOf="@+id/gridLayout01"
@@ -128,8 +128,10 @@
         android:id="@+id/flagCounterLabel"
         android:layout_width="32dp"
         android:layout_height="25dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="56dp"
         android:text="@string/flag"
+        app:layout_constraintBaseline_toBaselineOf="@+id/flagCounterTextView"
+        app:layout_constraintStart_toStartOf="@+id/gridLayout01"
         tools:ignore="MissingConstraints" />
 
     <TextView
@@ -137,11 +139,11 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="88dp"
-        android:text="Flags: 4"
+        android:layout_marginTop="96dp"
+        android:text="4"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.336"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
