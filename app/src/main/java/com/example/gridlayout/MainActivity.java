@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     boolean won = false;
     boolean[][] flagGrid = new boolean[12][10]; // Initialize a 2D array to track bomb locations
     boolean timerStart = false;
+    String secPassed = "";
 
     int flagCount = 4;
     private int secondsPassed = 0; // Initial time in seconds
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 tv.setTextSize( 20 ); //dpToPixel(32)//
                 tv.setTextAlignment(TextView.TEXT_ALIGNMENT_CENTER);
                 tv.setTextColor(Color.GRAY);
-                tv.setBackgroundColor(Color.GRAY);
+                tv.setBackgroundColor(Color.parseColor("lime"));
                 tv.setOnClickListener(this::onClickTV);
 
                 GridLayout.LayoutParams lp = new GridLayout.LayoutParams();
@@ -150,7 +151,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateFlagCountDisplay(TextView flagCounterTextView) {
         // Update the flag count display
-        flagCounterTextView.setText("Flags: " + flagCount);
+        String count = Integer.toString(flagCount);
+        flagCounterTextView.setText(count);
     }
 
 
@@ -174,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 if (timerStart) {
                     secondsPassed++;
                 }
-                String secPassed = Integer.toString(secondsPassed);
+                secPassed = Integer.toString(secondsPassed);
                 timeCounterTextView.setText(secPassed + "s");
                 timeHandler.postDelayed(this, 1000); // Delay 1 second (1000 milliseconds)
             }
@@ -271,14 +273,16 @@ public class MainActivity extends AppCompatActivity {
             if (adjacentMines == 0) {
                 // If no adjacent mines, recursively reveal adjacent cells
                 textView.setText("0"); // Set "0" to indicate no adjacent mines
-                textView.setBackgroundColor(Color.BLUE); // Update background color
+                textView.setTextColor(Color.LTGRAY);
+                textView.setBackgroundColor(Color.LTGRAY);
+//                textView.setBackgroundColor(Color.BLUE); // Update background color
                 // Check adjacent cells recursively
                 for (int i = -1; i <= 1; i++) {
                     for (int j = -1; j <= 1; j++) {
                         int newRow = row + i;
                         int newCol = col + j;
                         if (newRow >= 0 && newRow < bombGrid.length && newCol >= 0 && newCol < bombGrid[0].length) {
-                            revealAdjacent(newRow, newCol);
+                            revealCell(newRow, newCol);
                         }
                     }
                 }
@@ -286,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 // If there are adjacent mines, display the count
                 textView.setText(String.valueOf(adjacentMines));
                 // You can set different colors or backgrounds for different counts
-                textView.setBackgroundColor(Color.WHITE);
+                textView.setBackgroundColor(Color.LTGRAY);
             }
         }
     }
@@ -310,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
         // When the game ends
         if (won) {
             Intent intent = new Intent(this, DisplayActivity.class);
-            String message = "You won! Good Job";
+            String message = "Used " + secPassed + " seconds." + "\n" + "You won." + "\n" + "Good job!";
             intent.putExtra("com.example.GridLayout.MESSAGE", message);
             startActivity(intent);
 //            finish(); // Optionally finish the current activity
