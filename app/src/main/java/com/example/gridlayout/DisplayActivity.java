@@ -1,3 +1,12 @@
+package com.example.gridlayout;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.gridlayout.databinding.ActivityDisplayBinding;
 
 public class DisplayActivity extends AppCompatActivity {
@@ -8,7 +17,7 @@ public class DisplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display);
 
         Intent intent = getIntent();
-        String message = intent.getStringExtra("com.example.GridLayout.MESSAGE");
+        String message = ((Intent) intent).getStringExtra("com.example.GridLayout.MESSAGE");
 
         TextView textView = (TextView) findViewById(R.id.textView);
         textView.setText(message);
